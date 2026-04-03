@@ -32,10 +32,14 @@ jobs:
         run: |
           pytest tests/
 
-  validate-pr:
-    if: github.event_name == 'pull_request'
+  validate-pr-dev:
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
     needs: test
     runs-on: ubuntu-latest
+    environment: dev
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,24 +47,47 @@ jobs:
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Show repo files
+      - name: Validate bundle for DEV
         run: |
-          pwd
-          ls -la
-          find . -maxdepth 2 -type f | sort
+          databricks bundle validate --target dev
 
-      - name: Validate bundle for PR target branch
+  validate-pr-uat:
+    if: github.event_name == 'pull_request' && github.base_ref == 'uat'
+    needs: test
+    runs-on: ubuntu-latest
+    environment: uat
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_UAT }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_UAT }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle for UAT
         run: |
-          if [ "${{ github.base_ref }}" = "dev" ]; then
-            databricks bundle validate --target dev
-          elif [ "${{ github.base_ref }}" = "uat" ]; then
-            databricks bundle validate --target uat
-          elif [ "${{ github.base_ref }}" = "main" ]; then
-            databricks bundle validate --target prod
-          else
-            echo "Unsupported PR base branch: ${{ github.base_ref }}"
-            exit 1
-          fi
+          databricks bundle validate --target uat
+
+  validate-pr-prod:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    needs: test
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle for PROD
+        run: |
+          databricks bundle validate --target prod
 
   deploy-dev:
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
