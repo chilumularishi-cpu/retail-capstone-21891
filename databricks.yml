@@ -1,0 +1,58 @@
+bundle:
+  name: retail_capstone_21891
+
+workspace:
+  root_path: /Shared/bundles/retail_capstone_21891/${bundle.target}
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: ${env.DATABRICKS_HOST}
+    variables:
+      catalog_name: dev_21891
+      cluster_id: ${env.DATABRICKS_CLUSTER_ID}
+
+  uat:
+    workspace:
+      host: ${env.DATABRICKS_HOST}
+    variables:
+      catalog_name: uat_21891
+      cluster_id: ${env.DATABRICKS_CLUSTER_ID}
+
+  prod:
+    workspace:
+      host: ${env.DATABRICKS_HOST}
+    variables:
+      catalog_name: prod_21891
+      cluster_id: ${env.DATABRICKS_CLUSTER_ID}
+
+resources:
+  jobs:
+    retail_capstone_job:
+      name: retail_capstone_job_${bundle.target}
+      tasks:
+        - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: ./03_bronze_ingestion.py
+            base_parameters:
+              pipeline.catalog: ${var.catalog_name}
+          existing_cluster_id: ${var.cluster_id}
+
+        - task_key: silver_transform_merge
+          depends_on:
+            - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: ./04_silver_transform_merge.py
+            base_parameters:
+              pipeline.catalog: ${var.catalog_name}
+          existing_cluster_id: ${var.cluster_id}
+
+        - task_key: gold_build
+          depends_on:
+            - task_key: silver_transform_merge
+          notebook_task:
+            notebook_path: ./05_gold_build.py
+            base_parameters:
+              pipeline.catalog: ${var.catalog_name}
+          existing_cluster_id: ${var.cluster_id}
