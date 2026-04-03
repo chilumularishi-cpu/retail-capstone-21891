@@ -1,13 +1,13 @@
 bundle:
   name: retail_capstone_21891
-
-variables:
-  catalog_name:
-    description: "Catalog name for the environment"
-    default: "dev_21891"
+  databricks_cli_version: ">= 0.218.0"
 
 workspace:
   root_path: /Shared/bundles/retail_capstone_21891/${bundle.target}
+
+variables:
+  catalog_name:
+    description: Target catalog name
 
 targets:
   dev:
