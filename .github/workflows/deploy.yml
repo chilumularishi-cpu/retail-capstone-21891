@@ -96,9 +96,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Databricks CLI
-        run: |
-          pip install databricks-cli
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
 
       - name: Validate bundle
         run: |
