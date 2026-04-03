@@ -40,7 +40,7 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
-      DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_DEV }}
+      # DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_DEV }}
 
     steps:
       - name: Checkout code
@@ -65,7 +65,7 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_UAT }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_UAT }}
-      DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_UAT }}
+      # DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_UAT }}
 
     steps:
       - name: Checkout code
@@ -90,7 +90,7 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
-      DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_PROD }}
+      # DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID_PROD }}
 
     steps:
       - name: Checkout code
